@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    jdbcUrl: jdbc:mysql://localhost:3306/easy_admin?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: efQ/qPrOrBblTamtoHoRlg==
+application.security.enabled: false

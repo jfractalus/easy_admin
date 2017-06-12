@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    jdbcUrl: jdbc:mysql://localhost:3306/easy_admin?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: GTuNnjtFNr/40cZTC7cukA==
+    driverClassName: com.mysql.cj.jdbc.Driver
+    dataSourceClassName: com.mysql.cj.jdbc.MysqlDataSource
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      show-sql: false
+      format_sql: false
+      database: MYSQL
+  flyway:
+      migrate: true
+  thymeleaf.cache: false
+application:
+  controllers:
+    path: com.volia.eadmin.controller.user
+  main_menu:
+    path: menu/main_menu.json
+  security:
+    enabled: true
+    tokenExpireAfterMinutes: 60
+    key: DSJHBS12547896
+    masterPassword: $VoL973@sd
+    encryptorAlgorithm: PBEWITHSHA1ANDDESEDE
+  websocket:
+    destination: /topic
+    app.destination: /app
+    endpoint: /event

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<body>
+    <!-- Current template use params:
+        1. modalId - to identify needed modal -->
+    <div layout:fragment="content">
+        <div th:id="${modalId}" class="modal fade" role="dialog"> <!--modalId comes from sub-view(modal.html)-->
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <th:block layout:fragment="modalHeader" />
+                    </div>
+                    <div class="modal-body">
+                        <th:block layout:fragment="modalContent" />
+                    </div>
+                    <div class="modal-footer">
+                        <th:block layout:fragment="modalButtons">
+                            <button type="button" class="btn btn-default" data-dismiss="modal" th:text="'Закрыть'" />
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

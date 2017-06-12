@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+<body>
+
+    <!--TableView(custom header, toolbar etc.)-->
+    <th:block th:fragment="multiActionTableView(viewInfo)"
+         th:with="tableInfo=${viewInfo.tableViewInfo},
+                        baseUrl=${'/' + viewInfo.requestMappingPrefix}">
+        <div id="toolbar" style="display: inline">
+            <button class="btn"
+                    th:text="Создать"
+                    th:attr="data-url=${baseUrl}"
+                    th:onclick="'window.location=\'' + ${baseUrl}+'/create\';'">
+                <i class="fa"/>
+            </button>
+            <div th:replace="component/sample/check-box :: simpleCheckbox('Скрыть фильтры', 'hideOrShowElementsByClass([\'form-control\', \'fht-cell\', \'filter-show-clear\'], this.checked)')" />
+            <script>
+                var hideOrShowElementsByClass = function (classArray, isHide) {
+                    classArray.forEach(function(className, ic) {
+                        Array.prototype.forEach.call(document.getElementsByClassName(className), function(el) {
+                            if (isHide){
+                                $(el).hide();
+                            }else{
+                                $(el).show();
+                            }
+                        });
+                    });
+                }
+            </script>
+        </div>
+        <div class="fixed-table-loading" style="top: 41px; display: none;"
+             th:text="'Loading, please wait...'"/>
+        <div class="fixed-table-body">
+            <h1 th:text="${viewInfo.title}" />
+            <th:block th:replace="component/sample/table :: actionTable(${tableInfo})"/>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="modalTableView(viewInfo,multiSelect)">
+        <div class="fixed-table-body">
+            <h1 th:text="${viewInfo.title}" />
+            <th:block th:replace="component/sample/table :: modalCheckableTable(${viewInfo.tableViewInfo},${multiSelect})"/>
+        </div>
+    </th:block>
+
+    <!--Only Table-->
+    <!--Any table has id="table". This is important for bootstrap-table init and modal tables -->
+    <th:block th:fragment="actionTable(tableInfo)">
+        <table id="table" class="table" data-toggle="table"
+               data-toolbar="#toolbar"
+               data-sort-name="name"
+               data-sort-order="desc"
+               data-show-toggle="true"
+               data-show-columns="true"
+               data-pagination="true"
+               data-show-export="true"
+               data-filter-control="true"
+               data-filter-show-clear="true"
+               data-search="true">
+            <thead class="fixed-table-header">
+                <tr>
+                    <th th:text="'Действия'"/>
+                    <th:block th:each="column : ${tableInfo.columns}"
+                              th:switch="${column.type}">
+                                <th:block th:case="DATE_TIME" >
+                                    <th th:replace="component/sample/table :: headerColumnSorterChooser(${column.name}, ${column.nativeName}, 'datetimerangepicker')"/>
+                                </th:block>
+                                <th:block th:case="LOCAL_DATE" >
+                                    <th th:replace="component/sample/table :: headerColumnSorterChooser(${column.name}, ${column.nativeName}, 'daterangepicker')"/>
+                                </th:block>
+                                <th:block th:case="ENUM" >
+                                    <th th:replace="component/sample/table :: headerColumnSorterChooser(${column.name}, ${column.nativeName}, 'select')"/>
+                                </th:block>
+                                <th:block th:case="*" >
+                                    <th th:replace="component/sample/table :: headerColumnSorterChooser(${column.name}, ${column.nativeName}, 'input')"/>
+                                </th:block>
+                    </th:block>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${tableInfo.rows}!=null" th:each="rowInfo : ${tableInfo.rows}">
+                    <td th:include="component/sample/drop-down :: crudDropDown('Редактирование',${rowInfo.id})"/>
+                    <td th:each="cellValue : ${rowInfo.cells}" th:utext="${cellValue}"/>
+                </tr>
+            </tbody>
+        </table>
+    </th:block>
+
+    <th th:fragment="headerColumnSorterChooser(name, nativeName, filterType)"
+            data-sortable="true"
+            th:text="${name}"
+            th:attr="data-field = ${nativeName},
+                     data-filter-control = ${filterType}"/>
+
+    <th:block th:fragment="modalCheckableTable(tableInfo,multiSelect)">
+        <table id="table" class="modalTable"
+               data-toggle="table"
+               data-filter-control="true"
+               data-click-to-select="true">
+            <thead class="fixed-table-header">
+                <tr>
+                    <th data-field="state" th:attr="data-radio=${!multiSelect}"  data-checkbox="true"/>
+                    <th th:each="column : ${tableInfo.columns}"
+                        th:attr="data-field = ${column.nativeName} ,
+                                 data-filter-control = ${(column.type == 'DATE_TIME' || column.type == 'LOCAL_DATE' )?'daterangepicker':'input'}"
+                        th:text="${column.name}"/>
+                    <th data-field = "shortD" th:text="'Описание'"/>
+                    <th data-field = "jsonViewRow" th:text="'Json'"/>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${tableInfo.rows}!=null" th:each="rowInfo : ${tableInfo.rows}">
+                    <td/>
+                    <td th:each="cellValue : ${rowInfo.cells}" th:text="${cellValue}"/>
+                    <td th:text="${rowInfo.shortCaption}"/>
+                    <td th:text="${rowInfo.jsonViewRow}"/>
+                </tr>
+            </tbody>
+        </table>
+    </th:block>
+
+    <th:block th:fragment="simpleTable(tableInfo)">
+        <table id="table" class="table">
+            <thead class="fixed-table-header">
+                <tr>
+                    <th th:each="column : ${tableInfo.columns}"
+                        th:text="${column.name}"/>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${tableInfo.rows}!=null" th:each="rowInfo : ${tableInfo.rows}">
+                    <td th:each="cellValue : ${rowInfo.cells}" th:text="${cellValue}"/>
+                </tr>
+            </tbody>
+        </table>
+    </th:block>
+
+</body>
+</html>

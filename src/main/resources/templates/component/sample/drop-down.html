@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+<body>
+
+    <div th:fragment="crudDropDown(name, id)" >
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle"
+                    data-toggle="dropdown">
+                <span th:text="${name}"/>
+                <span class="caret"/>
+            </button>
+            <ul class="dropdown-menu"
+                th:attr="data-id=${id}, data-item-url=${baseUrl + '/' + id}">
+                <li th:include="component/sample/drop-down :: dropItemWithLink('Просмотреть', 'fa fa-eye', '/'+${id})"/>
+                <li th:include="component/sample/drop-down :: dropItemWithLink('Изменить', 'fa fa-pencil', '/'+${id}+'?modify=true')"/>
+                <li th:include="component/sample/drop-down :: dropItem('Удалить', 'fa fa-trash-o text-danger')"
+                    th:onclick="'deleteRecord(\''+${baseUrl} + '\', ' + ${id}+ ')'"/>
+            </ul>
+        </div>
+    </div>
+
+    <div th:fragment="dropItem(text, icon)">
+        <a style="cursor: pointer">
+            <i th:class="${icon}"/>
+            <span th:text="${text}"/>
+        </a>
+    </div>
+
+    <div th:fragment="dropItemWithLink(text, icon, link)">
+        <a th:href="${baseUrl} + ${link}">
+            <i th:class="${icon}"/>
+            <span th:text="${text}"/>
+        </a>
+    </div>
+
+</body>
+</html>

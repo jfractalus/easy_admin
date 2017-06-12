@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="main/view-library :: bootstrap"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <div class="account-wall">
+                <h2 class="form-signin-heading">Вход в систему</h2>
+                <form name="f" th:action="@{/login}" method="post" class="form-signin">
+                    <div th:if="${param.error}" class="isa_error">
+                        <div class="error" color="red">неправильный логин или пароль</div>
+                    </div>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Логин"/><br/>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Пароль"/><br/>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+                    <label class="checkbox pull-left">
+                        <input type="checkbox" value="remember-me"/>
+                        Запомнить
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

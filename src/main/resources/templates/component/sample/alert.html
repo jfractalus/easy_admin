@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+<body>
+<script>
+    $('#refreshChangeBtn').click(function() {
+        location.reload();
+    });
+</script>
+    <!-- Current template use params:
+            1. alertId - to identify needed modal
+            2. alertType - optional param to choose alert type(WARNING, DANGER, INFO, SUCCESS). -->
+    <th:block th:fragment="hidedAllert(alertId, alertType)">
+        <div th:id="${alertId}" th:class="'alert alert-' + ${#strings.toLowerCase(alertType)} + ' alert-dismissable hidden'">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+            <strong>Данные этой таблицы были изменены!</strong> Пожалуйста, обновите страницу для получения корректных данных.
+        </div>
+    </th:block>
+
+    <th:block th:fragment="changeEntityAlert(backUrl, changeEntityUrl, modify)">
+        <button id="showDialog" style="visibility: hidden;" data-toggle="modal" data-target="#myModal"></button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Внимание</h4>
+                    </div>
+                    <div id="contentAlert" class="modal-body">
+                        Данная запись была изменена другим пользователем в то время, как Вы ее редактировали
+                    </div>
+                    <div class="modal-footer">
+                        <button id="refreshChangeBtn" style="visibility: visible" type="button" class="btn btn-primary" th:onclick="'window.location=\'' + ${changeEntityUrl} + '?modify=' + ${modify} + '\';'">Подтянуть изменения</button>
+                        <button id="leaveMyChangeBtn" style="visibility: visible" type="button" class="btn btn-primary" data-dismiss="modal" th:if="${modify}">Оставить мои правки</button>
+                        <button id="returnToMainTableBtn" type="button" class="btn btn-primary" th:onclick="'window.location=\'' + ${backUrl} + '\';'">Вернуться к таблице</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </th:block>
+
+
+</body>
+</html>

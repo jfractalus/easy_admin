@@ -1,0 +1,45 @@
+{
+  "menuItems":[
+    {
+      "nameOfItem":"Сообщения",
+      "order":1,
+      "link":"/message",
+      "leaf":true,
+      "subItems":[]
+    },
+    {
+      "nameOfItem":"Клиент",
+      "order":2,
+      "link":"/client",
+      "leaf":true,
+      "subItems":[]
+    },
+    {
+      "nameOfItem":"Настройки",
+      "order":3,
+      "link":"/setting",
+      "leaf":false,
+      "subItems":[{
+        "nameOfItem":"Пользователи",
+        "order":4,
+        "link":"/user",
+        "leaf":true,
+        "subItems":[]
+      },
+        {
+          "nameOfItem":"Права доступа",
+          "order":5,
+          "link":"/access",
+          "leaf":true,
+          "subItems":[]
+        }]
+    },
+    {
+      "nameOfItem":"Игрок",
+      "order":2,
+      "link":"/player",
+      "leaf":true,
+      "subItems":[]
+    }
+  ]
+}

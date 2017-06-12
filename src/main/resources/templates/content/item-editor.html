@@ -1,0 +1,34 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="main/base-tpl">
+<th:block layout:fragment="script">
+    <th:block th:include="main/view-library :: editor"/>
+    <th:block th:include="main/view-library :: table" />
+    <th:block th:include="main/view-library :: websoket" />
+    <th:block th:include="main/view-library :: lodash-compare" />
+</th:block>
+    <body th:onload="'subscribeToChangeEntity(\''+ ${backUrl} +'\', \''+ ${rowInfo.id} +'\', \'' + ${oldJsonView} + '\', \'' + ${prefixNameOfSubEntities} + '\');'" onunload="socketDisconnect();">
+        <th:block th:fragment="itemEditor(backUrl, columnInfos, rowInfo)" class="content"
+             layout:fragment="content">
+            <form id="submitForm"
+                  th:attr="data-url=${backUrl},
+                  data-item-id=${rowInfo.id}">
+                <div th:each="colIdx : ${#numbers.sequence(0, __${columnInfos.size()-1}__)}" th:remove="tag">
+                    <th:block th:replace="component/sample/editor :: editorChooser(${columnInfos[colIdx]}, ${rowInfo.cells[colIdx]})"/>
+                </div>
+                <input type="submit" value="Подтвердить" th:if="${modify}"/>
+                <input type="reset" value="Отменить изменения" th:if="${modify}"/>
+                <input type="button" value="Назад к таблице"
+                       th:onclick="'window.location=\'' + ${backUrl} + '\';'"/>
+            </form>
+
+            <div id="submitStatus" class="alert alert-dismissable hidden" style="margin-top: 20px;">
+                <strong id="submitStatusText"/>
+            </div>
+            <div th:replace="component/sample/alert :: changeEntityAlert('' + ${backUrl} +'', '' + ${changeUrl} + '','' + ${modify} +'')"/>
+            <div id="currentUser" style="visibility: hidden" th:text="${currentUser}"></div>
+        </th:block>
+    </body>
+</html>

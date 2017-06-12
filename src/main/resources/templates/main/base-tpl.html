@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      lang="ru">
+<head>
+    <title>Volia Easy Admin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <th:block th:replace="main/view-library :: bootstrap"/>
+    <th:block th:replace="main/view-library :: main"/>
+    <th:block th:replace="main/view-library :: search"/>
+    <th:block layout:fragment="link" />
+    <th:block layout:fragment="script" />
+</head>
+<body>
+    <header th:replace="main/header :: header(${beans.baseProvider.searchItems()})"/>
+    <div class="container-fluid row">
+        <div class="col-sm-3 sidenav">
+            <div th:replace="main/left-menu :: menuContainer(${beans.baseProvider.mainMenu()})"/>
+        </div>
+        <div class="container-main col-sm-9">
+            <div layout:fragment="content"/>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+    <header th:fragment="header(searchMap)" class="container-fluid header-fixed-top">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Volia Easy Admin</a>
+                </div>
+                <ul class="nav navbar-right top-nav">
+                    <li style="display: inline-block">
+                        <div th:replace="component/sample/select :: select(${searchMap})"/>
+                    </li>
+                    <li style="display: inline-block">
+                        <a href="/logout">
+                            <i class="fa fa-fw fa-power-off"></i>
+                            Выход
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="main/base-tpl">
+<head>
+    <th:block layout:fragment="script">
+        <th:block th:replace="main/view-library :: search"/>
+    </th:block>
+</head>
+<body th:fragment="search(searchMap)" class="content"
+      layout:fragment="content">
+    <div th:replace="component/sample/select :: select(${searchMap})"/>
+</body>
+</html>

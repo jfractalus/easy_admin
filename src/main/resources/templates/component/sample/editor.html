@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+    <body>
+
+        <div th:fragment="editorChooser(columnInfo, value)"
+             th:if="${columnInfo.visible}"
+             th:class="'form-group '+ ${!columnInfo.nullable?'required ':''} + ${columnInfo.nativeName}"
+             th:switch="${columnInfo.type}">
+            <th:block th:case="'NUMBER'">
+                <th:block th:replace="component/sample/editor :: editor(${columnInfo},${value},'^[ 0-9]+$')"/>
+            </th:block>
+            <th:block th:case="'DATE_TIME'">
+                <th:block th:replace="component/sample/editor :: datePicker(${columnInfo}, ${value}, true)"/>
+            </th:block>
+            <th:block th:case="'LOCAL_DATE'">
+                <th:block th:replace="component/sample/editor :: datePicker(${columnInfo},${value}, false)"/>
+            </th:block>
+            <th:block th:case="'LIST_OF_ENTITY'">
+                <th:block th:replace="component/sample/editor :: subItemPicker(${columnInfo},${value}, true)"/>
+            </th:block>
+            <th:block th:case="'SINGLE_ENTITY'">
+                <th:block th:replace="component/sample/editor :: subItemPicker(${columnInfo},${value}, false)"/>
+            </th:block>
+            <th:block th:case="'ENUM'">
+                <th:block th:replace="component/sample/editor :: selectPicker(${columnInfo},${value})"/>
+            </th:block>
+            <th:block th:case="'RICH_TEXT'">
+                <th:block th:replace="component/sample/editor :: richEditor(${columnInfo},${value},'')"/>
+            </th:block>
+            <th:block th:case="'EMBEDDABLE_ENTITY'">
+                <th:block th:replace="component/sample/editor :: subEntityPicker(${columnInfo},${value})"/>
+            </th:block>
+            <th:block th:case="'DROP_DOWN_LIST'">
+                <th:block th:replace="component/sample/editor :: dropItemPicker(${columnInfo},${value})"/>
+            </th:block>
+            <th:block th:case="*" th:remove="tag">
+                <th:block th:replace="component/sample/editor :: editor(${columnInfo},${value},'')"/>
+            </th:block>
+        </div>
+
+        <div th:fragment="richEditor(columnInfo, value, pattern)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <th:block th:replace="component/sample/editor :: richInput(${columnInfo}, ${value})"/>
+        </div>
+
+        <div th:fragment="editor(columnInfo, value, pattern)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <th:block th:replace="component/sample/editor :: simpleInput(${columnInfo}, ${value}, ${pattern})"/>
+        </div>
+
+        <div th:fragment="iconedEditor(columnInfo, value, pattern, iconClass)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <div th:class="'input-group'"
+                 th:include="component/sample/editor :: iconedInput(${columnInfo}, ${value}, ${pattern}, ${iconClass})"/>
+        </div>
+
+        <div th:fragment="datePicker(columnInfo, value, withTime)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <div th:class="'input-group ' + ${withTime ? 'date-time-picker' : 'date-picker'}"
+                 th:include="component/sample/editor :: iconedInput(${columnInfo}, ${value}, '', 'fa fa-calendar')" />
+        </div>
+
+        <label th:fragment="editorLabel(labelText)"
+               class="control-label"
+               th:text="${labelText}" />
+
+        <div th:fragment="iconedInput(columnInfo, value, pattern, iconClass)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: simpleInput(${columnInfo}, ${value}, ${pattern})"/>
+            <span th:class="'input-group-addon ' + ${columnInfo.type.toLowerCase()}">
+                <span th:class="${iconClass}"/>
+            </span>
+        </div>
+
+        <textarea th:fragment="richInput(columnInfo, value)"
+               class="form-control rich-editor"
+               th:utext="${value}"
+               th:name= "${columnInfo.nativeName}"
+               th:disabled="${!columnInfo.editable}"
+               th:required="${!columnInfo.nullable}" />
+
+        <input th:fragment="simpleInput(columnInfo, value, pattern)"
+               class="form-control "
+               th:value="${value}"
+               th:pattern="${pattern}"
+               th:name= "${columnInfo.nativeName}"
+               th:disabled="${!columnInfo.editable}"
+               th:required="${!columnInfo.nullable}" />
+
+        <!-- Subitem  components  -->
+        <div th:fragment="subItemPicker(columnInfo, value, isMultiSelect)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <div th:class="'input-group sub-items-chooser'" th:name="${columnInfo.nativeName}"
+                      th:include="component/sample/editor :: subitemInput(${columnInfo.nativeName}, ${value}, 'fa fa-book',${isMultiSelect})" />
+        </div>
+
+        <div th:fragment="subitemInput(groupName, value, iconClass, isMultiSelect)" th:remove="tag">
+            <fieldset th:if="${value!=null}"
+                    th:attr="data-name=${groupName}" class="form-control input subitems">
+                <th:block th:each="valueEntry:${value.shortCaptions}">
+                    <th:block th:replace="component/sample/editor :: subitem(${groupName}, ${valueEntry}, ${value.jsonViews})"/>
+                </th:block>
+            </fieldset>
+            <span th:class="'input-group-addon'"
+                  th:onclick="'loadAndShowModal(\''+@{${value.link+'/view'}(modalId=${columnInfo.nativeName},multiSelect=${isMultiSelect})}+'\', \''+${columnInfo.nativeName}+'\')'">
+                <span th:class="${iconClass}"/>
+            </span>
+        </div>
+
+        <!--Same as in item-editor "subitemView"-->
+        <div th:fragment="subitem(groupName, valueEntry, jsonViews)" class="alert alert-info alert-subitem">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" th:text="'&times;'"/>
+            <th:block th:text="${valueEntry.value}"/>
+            <input type="hidden" th:name="${groupName}"  th:value="${jsonViews[valueEntry.key]}"/>
+        </div>
+
+        <!-- Enum drop-down -->
+        <div th:fragment="selectPicker(columnInfo, value)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <th:block th:replace="component/sample/editor :: select(${columnInfo.nativeName}, ${value.name}, ${value.available})"/>
+        </div>
+
+        <div th:fragment="select(nativeName, selectedItem,  values)">
+            <select th:name="${nativeName}" class="selectpicker">
+                <th:block th:each="value: ${values}">
+                    <option th:text="${value}"
+                            th:selected="${value.toString()==selectedItem.toString()}"/>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Embedded entity -->
+        <div th:fragment="subEntityPicker(columnInfo, value)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <div th:class="'input-group full-width'" th:name="${columnInfo.nativeName}"
+                 th:include="component/sample/editor :: subEntityInput(${columnInfo.nativeName}, ${value})" />
+        </div>
+
+        <div th:fragment="subEntityInput(groupName, value)" th:remove="tag">
+            <fieldset th:if="${value!=null}"
+                      th:attr="data-name=${groupName}" class="form-control input subitems">
+                <th:block th:each="valueEntry:${value.toMap()}">
+                    <th:block th:replace="component/sample/editor :: subEntityField(${groupName}, ${valueEntry}, 'checkbox')"/>
+                </th:block>
+            </fieldset>
+        </div>
+
+        <div th:fragment="subEntityField(groupName, valueEntry, type)" class="alert alert-info alert-subitem">
+            <th:block th:text="${valueEntry.key}"/>
+            <input th:type="${type}" th:name="${valueEntry.key}+'Check'"  th:checked="${valueEntry.value}"
+                th:onchange="'saveSubEntityValue(\''+${groupName+'.'+valueEntry.key}+ '\', this )'"/>
+            <input type='hidden' th:name="${groupName+'.'+valueEntry.key}" th:value="${valueEntry.value}" /> <!-- for rest.js value -->
+        </div>
+
+        <!-- Dropitem  components  -->
+        <div th:fragment="dropItemPicker(columnInfo, value)" th:remove="tag">
+            <th:block th:replace="component/sample/editor :: editorLabel(${columnInfo.name})"/>
+            <div th:class="'input-group sub-items-chooser'" th:name="${columnInfo.nativeName}"
+                 th:include="component/sample/editor :: dropitemInput(${columnInfo.nativeName}, ${value}, 'fa fa-book')" />
+        </div>
+
+        <div th:fragment="dropitemInput(groupName, values, iconClass)" th:remove="tag">
+            <fieldset th:if="${values!=null}"
+                      th:attr="data-name=${groupName}" class="form-control input subitems">
+                <th:block th:each="value:${values.selectedValues}">
+                    <th:block th:replace="component/sample/editor :: dropitem(${groupName}, ${value})"/>
+                </th:block>
+            </fieldset>
+            <div th:class="'input-group-addon dropdown-toggle'"
+                 data-toggle="dropdown">
+                <span class="fa fa-book" />
+            </div>
+            <ul th:id="${groupName}" class="dropdown-menu dropdown-menu-right">
+                <th:block  th:each="value:${values.dropSet}">
+                    <li th:class="${value}"
+                        th:if="${!values.selectedValues.contains(value)}"
+                        th:include="component/sample/drop-down :: dropItem(${value}, '')"
+                        th:onclick="'selectDropItem(\''+${groupName}+ '\',\'' + ${value}+ '\')'" />
+                </th:block>
+            </ul>
+        </div>
+
+        <div th:fragment="dropitem(groupName, value)" class="alert alert-info alert-subitem">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" th:text="'&times;'"
+                th:onclick="'removeDropItem(\''+${groupName}+ '\',\'' + ${value}+ '\')'"/>
+            <th:block th:text="${value}"/>
+            <input type="hidden" th:name="${groupName}"  th:value="${value}"/>
+        </div>
+    </body>
+</html>

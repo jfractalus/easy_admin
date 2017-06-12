@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="simpleCheckbox(label, action)" th:remove="tag">
+        <input type="checkbox"
+               style="vertical-align: text-bottom"
+               th:onchange="${action}" />
+        <span th:text="${label}"
+              style="vertical-align: middle"/>
+    </div>
+</body>
+</html>

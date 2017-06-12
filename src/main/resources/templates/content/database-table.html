@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="main/base-tpl">
+<head>
+    <th:block layout:fragment="script">
+        <th:block th:replace="main/view-library :: table"/>
+        <th:block th:replace="main/view-library :: websoket"/>
+    </th:block>
+</head>
+    <body th:fragment="databaseTable(viewInfo)" class="content"
+             th:onload="'socketConnectAndSubscribe(\''+${viewInfo.requestMappingPrefix}+'\', showAlert ,\'#dataChanged\');'"
+             onunload="socketDisconnect();"
+             layout:fragment="content">
+                <div th:replace="component/sample/table :: multiActionTableView(${viewInfo})"/>
+                <div th:replace="component/sample/alert :: hidedAllert('dataChanged','WARNING')"/>
+    </body>
+</html>

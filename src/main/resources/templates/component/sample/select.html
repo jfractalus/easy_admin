@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th ="http://www.thymeleaf.org">
+<body>
+    <th:block th:fragment="select(searchMap)">
+        <select class="header-search" multiple="multiple">
+            <th:block th:each="entry: ${searchMap}">
+                <option th:value="${entry.key}" th:text="${entry.value +'('+#strings.substring(entry.key,1)+')'}" />
+            </th:block>
+        </select>
+    </th:block>
+</body>
+</html>
