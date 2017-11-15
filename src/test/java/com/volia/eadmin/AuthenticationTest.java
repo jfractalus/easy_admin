@@ -4,6 +4,9 @@ import com.volia.eadmin.config.WebConfig;
 import com.volia.eadmin.config.security.InMemoryAuthentication;
 import com.volia.eadmin.controller.user.MessageController;
 import com.volia.eadmin.core.controller.AbstractViewController;
+import com.volia.eadmin.core.service.SecurityService;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes =  WebConfig.class)
 @WebAppConfiguration
@@ -35,6 +39,9 @@ public class AuthenticationTest {
 
     // Init mocks
     private MockHttpServletRequest requestMock;
+
+    @Autowired
+    private SecurityService securityService;
 
     @Before
     public void init(){
@@ -66,4 +73,9 @@ public class AuthenticationTest {
         assertNotNull(modelAndView);
     }
 
+    @Test
+    public void decryptPassword(){
+        String encryptPassword = securityService.encryptPassword("volia_pwd");
+        Assert.assertEquals("volia_pwd", securityService.decryptPassword(encryptPassword));
+    }
 }

@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/easy_admin?characterEncoding=UTF-8&serverTimezone=UTC
+    username: volia_docker
+    password: icOiyU6ENVIiSDX2BkkCbhQOEJzIGKQ2
